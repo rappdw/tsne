@@ -43,7 +43,7 @@ else:
     ext_modules = [Extension(name='bh_sne',
                    sources=['tsne/bh_sne_src/sptree.cpp', 'tsne/bh_sne_src/tsne.cpp', 'tsne/bh_sne.pyx'],
                    include_dirs=[numpy.get_include(), '/usr/local/include', 'tsne/bh_sne_src/'],
-                   library_dirs=['/usr/local/lib'],
+                   library_dirs=['/usr/local/lib', '/usr/lib64/atlas'],
                    extra_compile_args=['-msse2', '-O3', '-fPIC', '-w'],
                    extra_link_args=['-Wl,-Bstatic', '-lcblas', '-Wl,-Bdynamic'],
                    language='c++')]
