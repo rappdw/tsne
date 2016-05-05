@@ -404,24 +404,24 @@ void SPTree::computeEdgeForces(unsigned int* row_P, unsigned int* col_P, double*
 void SPTree::print() 
 {
     if(cum_size == 0) {
-        printf("Empty node\n");
+        fprintf(stderr,"Empty node\n");
         return;
     }
 
     if(is_leaf) {
-        printf("Leaf node; data = [");
+        fprintf(stderr,"Leaf node; data = [");
         for(int i = 0; i < size; i++) {
             double* point = data + index[i] * dimension;
-            for(int d = 0; d < dimension; d++) printf("%f, ", point[d]);
-            printf(" (index = %d)", index[i]);
-            if(i < size - 1) printf("\n");
-            else printf("]\n");
+            for(int d = 0; d < dimension; d++) fprintf(stderr,"%f, ", point[d]);
+            fprintf(stderr," (index = %d)", index[i]);
+            if(i < size - 1) fprintf(stderr,"\n");
+            else fprintf(stderr,"]\n");
         }        
     }
     else {
-        printf("Intersection node with center-of-mass = [");
-        for(int d = 0; d < dimension; d++) printf("%f, ", center_of_mass[d]);
-        printf("]; children are:\n");
+        fprintf(stderr,"Intersection node with center-of-mass = [");
+        for(int d = 0; d < dimension; d++) fprintf(stderr,"%f, ", center_of_mass[d]);
+        fprintf(stderr,"]; children are:\n");
         for(int i = 0; i < no_children; i++) children[i]->print();
     }
 }
