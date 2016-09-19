@@ -2,6 +2,7 @@
 
 # C extensions
 *.so
+*.o
 
 # Packages
 *.egg
@@ -35,5 +36,6 @@ nosetests.xml
 
 # Project specific
 tsne/bh_sne.cpp
+tsne/bh_sne_src/bh_tsne
 *.pkl.gz
 .cache
