@@ -6,7 +6,7 @@ import sys
 from bh_sne import BH_SNE
 
 def bh_sne(data, pca_d=None, d=2, perplexity=30., theta=0.5,
-           random_state=None, copy_data=False):
+           random_state=None, copy_data=False, init=None):
     """
     Run Barnes-Hut T-SNE on _data_.
 
@@ -31,6 +31,8 @@ def bh_sne(data, pca_d=None, d=2, perplexity=30., theta=0.5,
 
     @param copy_data    Copy the data to prevent it from being modified
                         by the C code
+
+    @param init         Numpy array of initial positions
     """
     N, _ = data.shape
 
@@ -55,8 +57,14 @@ def bh_sne(data, pca_d=None, d=2, perplexity=30., theta=0.5,
     else:
         seed = random_state.randint(2**31-1)
 
+    if init is None:
+        use_init = False
+        init = np.zeros((1, d))
+    else:
+        use_init = True
+
     tsne = BH_SNE()
-    Y = tsne.run(X, N, X.shape[1], d, perplexity, theta, seed)
+    Y = tsne.run(X, N, X.shape[1], d, perplexity, theta, seed, init=init, use_init=use_init)
     return Y
 
 from ._version import get_versions

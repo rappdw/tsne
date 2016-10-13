@@ -49,7 +49,8 @@ using namespace std;
 
 // Perform t-SNE
 void TSNE::run(double* X, int N, int D, double* Y, int no_dims, double perplexity, double theta, int rand_seed,
-               bool skip_random_init, int max_iter, int stop_lying_iter, int mom_switch_iter) {
+               bool skip_random_init, double *init, bool use_init,
+	       int max_iter, int stop_lying_iter, int mom_switch_iter) {
 
     // Set random seed
     if (skip_random_init != true) {
@@ -70,8 +71,8 @@ void TSNE::run(double* X, int N, int D, double* Y, int no_dims, double perplexit
     // Set learning parameters
     float total_time = .0;
     clock_t start, end;
-	double momentum = .5, final_momentum = .8;
-	double eta = 200.0;
+    double momentum = .5, final_momentum = .8;
+    double eta = 200.0;
 
     // Allocate some memory
     double* dY    = (double*) malloc(N * no_dims * sizeof(double));
@@ -136,10 +137,16 @@ void TSNE::run(double* X, int N, int D, double* Y, int no_dims, double perplexit
     if(exact) { for(int i = 0; i < N * N; i++)        P[i] *= 12.0; }
     else {      for(int i = 0; i < row_P[N]; i++) val_P[i] *= 12.0; }
 
-	// Initialize solution (randomly)
-  if (skip_random_init != true) {
-  	for(int i = 0; i < N * no_dims; i++) Y[i] = randn() * .0001;
-  }
+    // Initialize solution (randomly or with given coordinates)
+    if (!use_init && !skip_random_init) {
+      for(int i = 0; i < N * no_dims; i++) {
+	Y[i] = randn() * .0001;
+      }
+    } else if (use_init) {
+      for(int i = 0; i < N * no_dims; i++) {
+	Y[i] = init[i];
+      }
+    }
 
 	// Perform main training loop
     if(exact) fprintf(stderr,"Input similarities computed in %4.2f seconds!\nLearning embedding...\n", (float) (end - start) / CLOCKS_PER_SEC);
@@ -301,9 +308,9 @@ double TSNE::evaluateError(double* P, double* Y, int N, int D) {
 
     // Sum t-SNE error
     double C = .0;
-	for(int n = 0; n < N * N; n++) {
-        C += P[n] * log((P[n] + FLT_MIN) / (Q[n] + FLT_MIN));
-	}
+    for(int n = 0; n < N * N; n++) {
+      C += P[n] * log((P[n] + FLT_MIN) / (Q[n] + FLT_MIN));
+    }
 
     // Clean up memory
     free(DD);
@@ -745,7 +752,7 @@ int main(int argc, char *argv[]) {
 		double* Y = (double*) malloc(N * no_dims * sizeof(double));
 		double* costs = (double*) calloc(N, sizeof(double));
         if(Y == NULL || costs == NULL) { fprintf(stderr,"Memory allocation failed!\n"); exit(1); }
-		tsne->run(data, N, D, Y, no_dims, perplexity, theta, rand_seed, false, max_iter);
+	tsne->run(data, N, D, Y, no_dims, perplexity, theta, rand_seed, false, NULL, false, max_iter);
 
 		// Save the results
 		tsne->save_data(res_file_c, Y, landmarks, costs, N, no_dims);
