@@ -9,7 +9,7 @@ cdef extern from "tsne.h":
         TSNE()
         void run(double* X, int N, int D, double* Y, int no_dims, double perplexity, double theta, int rand_seed, bool skip_random_init, double *init, bool use_init, int max_iter, int stop_lying_iter, int mom_switch_iter)
 
-cdef class BH_SNE:
+cdef class BH_SNE_3D:
     cdef TSNE* thisptr # hold a C++ instance
 
     def __cinit__(self):

@@ -30,7 +30,6 @@
  *
  */
 
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -45,8 +44,13 @@
 #include "sptree.h"
 #include "tsne.h"
 
-
 using namespace std;
+
+#ifdef TSNE3D
+#define NDIMS 3
+#else
+#define NDIMS 2
+#endif
 
 // Perform t-SNE
 void TSNE::run(double* X, int N, int D, double* Y, int no_dims, double perplexity, double theta, int rand_seed,
@@ -217,7 +221,7 @@ void TSNE::computeGradient(double* P, unsigned int* inp_row_P, unsigned int* inp
 {
 
     // Construct space-partitioning tree on current map
-    SPTree<2>* tree = new SPTree<2>(Y, N);
+    SPTree<NDIMS>* tree = new SPTree<NDIMS>(Y, N);
 
     // Compute all terms required for t-SNE gradient
     double sum_Q = .0;
@@ -327,7 +331,7 @@ double TSNE::evaluateError(unsigned int* row_P, unsigned int* col_P, double* val
 {
 
     // Get estimate of normalization term
-    SPTree<2>* tree = new SPTree<2>(Y, N);
+    SPTree<NDIMS>* tree = new SPTree<NDIMS>(Y, N);
     double* buff = (double*) calloc(D, sizeof(double));
     double sum_Q = .0;
     for(int n = 0; n < N; n++) tree->computeNonEdgeForces(n, theta, buff, &sum_Q);
@@ -760,9 +764,6 @@ int main(int argc, char *argv[]) {
 
     // Read the parameters and the dataset
 	if(tsne->load_data(dat_file_c, &data, &origN, &D, &no_dims, &theta, &perplexity, &rand_seed, &max_iter)) {
-
-        // assert that no_dims = 2. if not, the template hack won't work.
-        if (no_dims != 2) { fprintf(stderr,"Number of dims must be 2!\n"); exit(1); }
 
 		// Make dummy landmarks
         N = origN;

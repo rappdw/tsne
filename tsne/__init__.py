@@ -4,6 +4,7 @@ import numpy as np
 import scipy.linalg as la
 import sys
 from bh_sne import BH_SNE
+from bh_sne_3d import BH_SNE_3D
 
 def bh_sne(data, pca_d=None, d=2, perplexity=30., theta=0.5,
            random_state=None, copy_data=False, init=None,
@@ -16,8 +17,7 @@ def bh_sne(data, pca_d=None, d=2, perplexity=30., theta=0.5,
     @param pca_d        The dimensionality of data is reduced via PCA
                         to this dimensionality.
 
-    @param d            The embedding dimensionality. Must be fixed to
-                        2.
+    @param d            The embedding dimensionality. Must be 2 or 3.
 
     @param perplexity   The perplexity controls the effective number of
                         neighbors.
@@ -79,7 +79,13 @@ def bh_sne(data, pca_d=None, d=2, perplexity=30., theta=0.5,
     if mom_switch_iter is None:
         mom_switch_iter = 250
 
-    tsne = BH_SNE()
+    if d == 2:
+        tsne = BH_SNE()
+    elif d == 3:
+        tsne = BH_SNE_3D()
+    else:
+        raise Exception("TSNE dimensions must be 2 or 3")
+
     Y = tsne.run(X, N, X.shape[1], d, perplexity, theta, seed, init=init, use_init=use_init,
                  max_iter=max_iter, stop_lying_iter=stop_lying_iter, mom_switch_iter=mom_switch_iter)
     return Y
