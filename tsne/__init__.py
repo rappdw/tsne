@@ -6,7 +6,8 @@ import sys
 from bh_sne import BH_SNE
 
 def bh_sne(data, pca_d=None, d=2, perplexity=30., theta=0.5,
-           random_state=None, copy_data=False, init=None):
+           random_state=None, copy_data=False, init=None,
+           max_iter=None, stop_lying_iter=None, mom_switch_iter=None):
     """
     Run Barnes-Hut T-SNE on _data_.
 
@@ -33,6 +34,12 @@ def bh_sne(data, pca_d=None, d=2, perplexity=30., theta=0.5,
                         by the C code
 
     @param init         Numpy array of initial positions
+
+    @param max_iter    Maximum number of iterations
+
+    @param stop_lying_iter Iterations spent in high-alpha mode
+
+    @param mom_switch_iter Iterations spent in high-momentum mode
     """
     N, _ = data.shape
 
@@ -63,8 +70,18 @@ def bh_sne(data, pca_d=None, d=2, perplexity=30., theta=0.5,
     else:
         use_init = True
 
+    if max_iter is None:
+        max_iter = 1000
+
+    if stop_lying_iter is None:
+        stop_lying_iter = 250
+
+    if mom_switch_iter is None:
+        mom_switch_iter = 250
+
     tsne = BH_SNE()
-    Y = tsne.run(X, N, X.shape[1], d, perplexity, theta, seed, init=init, use_init=use_init)
+    Y = tsne.run(X, N, X.shape[1], d, perplexity, theta, seed, init=init, use_init=use_init,
+                 max_iter=max_iter, stop_lying_iter=stop_lying_iter, mom_switch_iter=mom_switch_iter)
     return Y
 
 from ._version import get_versions

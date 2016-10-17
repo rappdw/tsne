@@ -47,7 +47,7 @@ public:
     bool load_data(const char* dat_file, double** data, int* n, int* d, int* no_dims, double* theta, double* perplexity, int* rand_seed, int* max_iter);
     void save_data(const char* res_file, double* data, int* landmarks, double* costs, int n, int d);
     void symmetrizeMatrix(unsigned int** row_P, unsigned int** col_P, double** val_P, int N); // should be static!
-
+    void save_csv(const char* csv_file, double* Y, int N, int D);
 
 private:
     void computeGradient(double* P, unsigned int* inp_row_P, unsigned int* inp_col_P, double* inp_val_P, double* Y, int N, int D, double* dC, double theta);
