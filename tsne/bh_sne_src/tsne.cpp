@@ -32,6 +32,7 @@
 
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <math.h>
@@ -50,7 +51,8 @@ using namespace std;
 // Perform t-SNE
 void TSNE::run(double* X, int N, int D, double* Y, int no_dims, double perplexity, double theta, int rand_seed,
                bool skip_random_init, double *init, bool use_init,
-	       int max_iter, int stop_lying_iter, int mom_switch_iter) {
+	           int max_iter, int stop_lying_iter, int mom_switch_iter
+               ) {
 
     // Set random seed
     if (skip_random_init != true) {
@@ -67,6 +69,8 @@ void TSNE::run(double* X, int N, int D, double* Y, int no_dims, double perplexit
     if(N - 1 < 3 * perplexity) { fprintf(stderr,"Perplexity too large for the number of data points!\n"); exit(1); }
     fprintf(stderr,"Using no_dims = %d, perplexity = %f, and theta = %f\n", no_dims, perplexity, theta);
     bool exact = (theta == .0) ? true : false;
+
+    fprintf(stderr,"Using max_iter = %d, stop_lying_iter = %d, mom_switch_iter = %d\n", max_iter, stop_lying_iter, mom_switch_iter);
 
     // Set learning parameters
     float total_time = .0;
@@ -140,11 +144,11 @@ void TSNE::run(double* X, int N, int D, double* Y, int no_dims, double perplexit
     // Initialize solution (randomly or with given coordinates)
     if (!use_init && !skip_random_init) {
       for(int i = 0; i < N * no_dims; i++) {
-	Y[i] = randn() * .0001;
+	    Y[i] = randn() * .0001;
       }
     } else if (use_init) {
       for(int i = 0; i < N * no_dims; i++) {
-	Y[i] = init[i];
+	    Y[i] = init[i];
       }
     }
 
@@ -714,6 +718,24 @@ void TSNE::save_data(const char* res_file, double* data, int* landmarks, double*
 	fprintf(stderr,"Wrote the %i x %i data matrix successfully!\n", n, d);
 }
 
+void TSNE::save_csv(const char* csv_file, double* Y, int N, int D) {
+    std::ofstream csv(csv_file);
+
+    for (int d = 0; d < D; d++) {
+        csv << "TSNE" << d+1 << ",";
+    }
+    csv << "\n";
+
+    for (int n = 0; n < N; n++) {
+        int row_offset = n * D;
+        for (int d = 0; d < D; d++) {
+            csv << Y[row_offset + d] << ",";
+        }
+        csv << "\n";
+    }
+
+    csv.close();
+}
 
 // Function that runs the Barnes-Hut implementation of t-SNE
 int main(int argc, char *argv[]) {
@@ -752,7 +774,7 @@ int main(int argc, char *argv[]) {
 		double* Y = (double*) malloc(N * no_dims * sizeof(double));
 		double* costs = (double*) calloc(N, sizeof(double));
         if(Y == NULL || costs == NULL) { fprintf(stderr,"Memory allocation failed!\n"); exit(1); }
-	tsne->run(data, N, D, Y, no_dims, perplexity, theta, rand_seed, false, NULL, false, max_iter);
+	    tsne->run(data, N, D, Y, no_dims, perplexity, theta, rand_seed, false, NULL, false, max_iter);
 
 		// Save the results
 		tsne->save_data(res_file_c, Y, landmarks, costs, N, no_dims);
