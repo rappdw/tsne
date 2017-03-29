@@ -45,11 +45,11 @@ pip install git+https://github.com/danielfrg/tsne.git
 Or using docker (could be useful for testing):
 
 ```
-$ docker build -t tsne .
-$ docker run -it -v /Users/drodriguez/workspace/tsne/:/tsne tsn
+$ docker build -t tsne -f docker/dev/Dockerfile .
+$ docker run --rm -it -v $PWD:/tsne tsne
 
-# Inside Docker:
-$ python setup.py install
+# This will pip install -e . the current directory tree inside the container. From there...
+$ python docker/dev/test.py # or whatever else you'd like to test
 ```
 
 Usage
