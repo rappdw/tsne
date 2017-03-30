@@ -2,8 +2,8 @@
 #CFLAGS = -march=haswell -ffast-math -O3 -Rpass=loop-vectorize -Rpass-missed=loop-vectorize  -Rpass-analysis=loop-vectorize
 #CFLAGS = -march=haswell -ffast-math -O3
 
-CXX = g++
-CFLAGS = -ffast-math -O3
+CXX = /usr/local/bin/g++-6
+CFLAGS = -O2 -flto -ffast-math -fopenmp
 
 all: bh_tsne bh_tsne_3d
 
@@ -20,7 +20,7 @@ tsne.o: tsne.cpp tsne.h sptree.h vptree.h
 	$(CXX) $(CFLAGS) -c tsne.cpp
 
 tsne_3d.o: tsne.cpp tsne.h sptree.h vptree.h
-	$(CXX) $(CFLAGS) -DTSNE3D -c tsne.cpp
+	$(CXX) $(CFLAGS) -DTSNE3D -c tsne.cpp -o tsne_3d.o
 
 clean:
 	rm -Rf *.o bh_tsne bh_tsne_3d

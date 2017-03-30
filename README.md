@@ -72,3 +72,11 @@ More Information
 ----------------
 
 See *Barnes-Hut-SNE* (2013), L.J.P. van der Maaten. It is available on [arxiv](http://arxiv.org/abs/1301.3342).
+
+On OSX
+------
+Run `brew install gcc --without-multilib` (to get OpenMP version of compiler)
+
+You'll need to set environment variables for CC and CXX to get setuptools to build things properly.
+
+`export CXX=/usr/local/bin/g++-6; export CC=/usr/local/bin/gcc-6; pip install -e .`
