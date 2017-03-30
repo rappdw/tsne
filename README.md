@@ -45,11 +45,11 @@ pip install git+https://github.com/danielfrg/tsne.git
 Or using docker (could be useful for testing):
 
 ```
-$ docker build -t tsne .
-$ docker run -it -v /Users/drodriguez/workspace/tsne/:/tsne tsn
+$ docker build -t tsne -f docker/dev/Dockerfile .
+$ docker run --rm -it -v $PWD:/tsne tsne
 
-# Inside Docker:
-$ python setup.py install
+# This will pip install -e . the current directory tree inside the container. From there...
+$ python docker/dev/test.py # or whatever else you'd like to test
 ```
 
 Usage
@@ -72,3 +72,11 @@ More Information
 ----------------
 
 See *Barnes-Hut-SNE* (2013), L.J.P. van der Maaten. It is available on [arxiv](http://arxiv.org/abs/1301.3342).
+
+On OSX
+------
+Run `brew install gcc --without-multilib` (to get OpenMP version of compiler)
+
+You'll need to set environment variables for CC and CXX to get setuptools to build things properly.
+
+`export CXX=/usr/local/bin/g++-6; export CC=/usr/local/bin/gcc-6; pip install -e .`

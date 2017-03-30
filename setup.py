@@ -26,37 +26,38 @@ if sys.platform == 'darwin':
     v2 = int(parts[1])
     v3 = int(parts[2]) if len(parts) == 3 else None
 
-    if v2 >= 10:
-        # More than 10.10
-        extra_compile_args=['-I/System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers']
-    else:
-        extra_compile_args=['-I/System/Library/Frameworks/vecLib.framework/Headers']
-
     ext_modules = [Extension(name='tsne.bh_sne',
-                   sources=['tsne/bh_sne_src/sptree.cpp', 'tsne/bh_sne_src/tsne.cpp', 'tsne/bh_sne.pyx'],
-                   include_dirs=[numpy.get_include(), 'tsne/bh_sne_src/'],
-                   extra_compile_args=extra_compile_args + ['-ffast-math', '-O3'],
-                   extra_link_args=['-Wl,-framework', '-Wl,Accelerate', '-lcblas'],
-                   language='c++')]
+                             sources=['tsne/bh_sne_src/sptree.cpp', 'tsne/bh_sne_src/tsne.cpp', 'tsne/bh_sne.pyx'],
+                             include_dirs=[numpy.get_include(), 'tsne/bh_sne_src/'],
+                             extra_compile_args=['-ffast-math', '-fopenmp', '-flto'],
+                             extra_link_args=['-Wl,-framework', '-Wl,Accelerate', '-lgomp'],
+                             language='c++'),
+
+                   Extension(name='tsne.bh_sne_3d',
+                             sources=['tsne/bh_sne_src/sptree.cpp', 'tsne/bh_sne_src/tsne.cpp', 'tsne/bh_sne_3d.pyx'],
+                             include_dirs=[numpy.get_include(), 'tsne/bh_sne_src/'],
+                             extra_compile_args=['-ffast-math', '-DTSNE3D', '-fopenmp', '-flto'],
+                             extra_link_args=['-Wl,-framework', '-Wl,Accelerate', '-lgomp'],
+                             language='c++')]
 
 else:
     # LINUX
-
     ext_modules = [Extension(name='tsne.bh_sne',
-                   sources=['tsne/bh_sne_src/sptree.cpp', 'tsne/bh_sne_src/tsne.cpp', 'tsne/bh_sne.pyx'],
-                   include_dirs=[numpy.get_include(), '/usr/local/include', 'tsne/bh_sne_src/'],
-                   library_dirs=['/usr/local/lib', '/usr/lib64/atlas'],
-                   extra_compile_args=['-msse2', '-O3', '-fPIC', '-w', '-ffast-math'],
-                   extra_link_args=['-Wl,-Bstatic', '-lcblas', '-Wl,-Bdynamic'],
-                   language='c++'),
+                             sources=['tsne/bh_sne_src/sptree.cpp', 'tsne/bh_sne_src/tsne.cpp', 'tsne/bh_sne.pyx'],
+                             include_dirs=[numpy.get_include(), '/usr/local/include', 'tsne/bh_sne_src/'],
+                             library_dirs=['/usr/local/lib', '/usr/lib64/atlas'],
+                             extra_compile_args=['-msse2', '-fPIC', '-w', '-ffast-math', '-O2', '-fopenmp', '-flto'],
+                             extra_link_args=['-lgomp'],
+                             language='c++'),
 
                    Extension(name='tsne.bh_sne_3d',
-                   sources=['tsne/bh_sne_src/sptree.cpp', 'tsne/bh_sne_src/tsne.cpp', 'tsne/bh_sne_3d.pyx'],
-                   include_dirs=[numpy.get_include(), '/usr/local/include', 'tsne/bh_sne_src/'],
-                   library_dirs=['/usr/local/lib', '/usr/lib64/atlas'],
-                   extra_compile_args=['-msse2', '-O3', '-fPIC', '-w', '-ffast-math', '-DTSNE3D'],
-                   extra_link_args=['-Wl,-Bstatic', '-lcblas', '-Wl,-Bdynamic'],
-                   language='c++')]
+                             sources=['tsne/bh_sne_src/sptree.cpp', 'tsne/bh_sne_src/tsne.cpp', 'tsne/bh_sne_3d.pyx'],
+                             include_dirs=[numpy.get_include(), '/usr/local/include', 'tsne/bh_sne_src/'],
+                             library_dirs=['/usr/local/lib', '/usr/lib64/atlas'],
+                             extra_compile_args=['-msse2', '-fPIC', '-w', '-ffast-math', '-DTSNE3D', '-O2', '-fopenmp',
+                                                 '-flto'],
+                             extra_link_args=['-lgomp'],
+                             language='c++')]
 
 ext_modules = cythonize(ext_modules)
 
@@ -77,4 +78,4 @@ setup(name='tsne',
       packages=find_packages(),
       ext_modules=ext_modules,
       install_requires=required
-)
+      )

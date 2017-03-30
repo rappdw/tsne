@@ -56,12 +56,12 @@ Cell<NDims>::~Cell() {
 }
 
 template<int NDims>
-double Cell<NDims>::getCorner(unsigned int d) {
+double Cell<NDims>::getCorner(unsigned int d) const {
     return corner[d];
 }
 
 template<int NDims>
-double Cell<NDims>::getWidth(unsigned int d) {
+double Cell<NDims>::getWidth(unsigned int d) const {
     return width[d];
 }
 
@@ -77,7 +77,7 @@ void Cell<NDims>::setWidth(unsigned int d, double val) {
 
 // Checks whether a point lies in a cell
 template<int NDims>
-bool Cell<NDims>::containsPoint(double point[])
+bool Cell<NDims>::containsPoint(double point[]) const
 {
     for(int d = 0; d < NDims; d++) {
         if(corner[d] - width[d] > point[d]) return false;
@@ -348,11 +348,13 @@ unsigned int SPTree<NDims>::getDepth() {
 
 // Compute non-edge forces using Barnes-Hut algorithm
 template<int NDims>
-void SPTree<NDims>::computeNonEdgeForces(unsigned int point_index, double theta, double neg_f[], double* sum_Q)
+double SPTree<NDims>::computeNonEdgeForces(unsigned int point_index, double theta, double neg_f[]) const
 {
+    double resultSum = 0;
+    double buff[NDims];  // make buff local for parallelization
 
     // Make sure that we spend no time on empty nodes or self-interactions
-    if(cum_size == 0 || (is_leaf && size == 1 && index[0] == point_index)) return;
+    if(cum_size == 0 || (is_leaf && size == 1 && index[0] == point_index)) return resultSum;
 
     // Compute distance between point and center-of-mass
     double sqdist = .0;
@@ -375,33 +377,37 @@ void SPTree<NDims>::computeNonEdgeForces(unsigned int point_index, double theta,
         // Compute and add t-SNE force between point and current node
         sqdist = 1.0 / (1.0 + sqdist);
         double mult = cum_size * sqdist;
-        *sum_Q += mult;
+        resultSum += mult;
         mult *= sqdist;
         for(unsigned int d = 0; d < NDims; d++) neg_f[d] += mult * buff[d];
     }
     else {
 
         // Recursively apply Barnes-Hut to children
-        for(unsigned int i = 0; i < no_children; i++) children[i]->computeNonEdgeForces(point_index, theta, neg_f, sum_Q);
+        for(unsigned int i = 0; i < no_children; i++){
+            resultSum += children[i]->computeNonEdgeForces(point_index, theta, neg_f);
+        }
     }
+    return resultSum;
 }
 
 
 // Computes edge forces
 template<int NDims>
-void SPTree<NDims>::computeEdgeForces(unsigned int* row_P, unsigned int* col_P, double* val_P, int N, double* pos_f)
+void SPTree<NDims>::computeEdgeForces(unsigned int* row_P, unsigned int* col_P, double* val_P, int N, double* pos_f) const
 {
 
     // Loop over all edges in the graph
-    unsigned int ind1 = 0;
-    unsigned int ind2 = 0;
-    double sqdist;
+    #pragma omp parallel for schedule(static)
     for(unsigned int n = 0; n < N; n++) {
+        unsigned int ind1 = n * NDims;
         for(unsigned int i = row_P[n]; i < row_P[n + 1]; i++) {
 
+            double buff[NDims]; // make buff local for parallelization
+
             // Compute pairwise distance and Q-value
-            sqdist = 1.0;
-            ind2 = col_P[i] * NDims;
+            double sqdist = 1.0;
+            unsigned int ind2 = col_P[i] * NDims;
 
             for(unsigned int d = 0; d < NDims; d++) {
                 buff[d] = data[ind1 + d] - data[ind2 + d];
@@ -413,7 +419,6 @@ void SPTree<NDims>::computeEdgeForces(unsigned int* row_P, unsigned int* col_P, 
             // Sum positive force
             for(unsigned int d = 0; d < NDims; d++) pos_f[ind1 + d] += sqdist * buff[d];
         }
-        ind1 += NDims;
     }
 }
 

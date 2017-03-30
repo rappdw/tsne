@@ -1,0 +1,6 @@
+.git
+.*env
+activate
+.travis.yml
+*.cpp
+*.so
