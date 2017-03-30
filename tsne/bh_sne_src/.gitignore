@@ -1,0 +1,3 @@
+cmake-build-debug
+*.dat
+bh_tsne
