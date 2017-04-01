@@ -14,7 +14,6 @@ from setuptools import find_packages
 from distutils.extension import Extension
 
 import versioneer
-import numpy
 from Cython.Distutils import build_ext
 from Cython.Build import cythonize
 
