@@ -24,8 +24,8 @@ from Cython.Build import cythonize
 
 class CmakeBuildMixin():
     def cmake_build(self):
-        build_dir = os.path.join(os.path.dirname(__file__), self.build_lib + '/cmake')
-        source_dir = os.path.join(os.path.join(os.path.dirname(__file__), 'tsne'), 'bh_sne_src')
+        build_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), self.build_lib + '/cmake')
+        source_dir = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tsne'), 'bh_sne_src')
         if not os.path.exists(build_dir):
             os.makedirs(build_dir)
         else:
