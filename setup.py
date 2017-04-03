@@ -61,21 +61,26 @@ else:
 
 ext_modules = cythonize(ext_modules)
 
-with open('requirements.txt') as f:
-    required = f.read().splitlines()
-
 cmdclass = versioneer.get_cmdclass()
 cmdclass['build_ext'] = build_ext
 
 setup(name='tsne',
       version=versioneer.get_version(),
       cmdclass=versioneer.get_cmdclass(),
-      author='Daniel Rodriguez',
-      author_email='df.rodriguez@gmail.com',
-      url='https://github.com/danielfrg/py_tsne',
+      author='Daniel Rapp',
+      author_email='rappdw@gmail.com',
+      url='https://github.com/rappdw/tsne.git',
       description='TSNE implementations for python',
+      long_description='''
+This is based on the https://github.com/10XDev/tsne.git fork of L.J.P. van der Maaten BH-tSNE implementation.
+
+It has fixes to allow this to run in Python 3. More significantly, performance has been significantly
+increased with OpenMP parallelism (see: https://github.com/rappdw/tsne-perf-test.git)''',
       license='Apache License Version 2.0, January 2004',
       packages=find_packages(),
       ext_modules=ext_modules,
-      install_requires=required
+      install_requires=[
+          'numpy',
+          'scipy'
+          ]
       )

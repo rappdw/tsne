@@ -1,3 +1,4 @@
 cmake-build-debug
 *.dat
 bh_tsne
+bh_tsne_3d

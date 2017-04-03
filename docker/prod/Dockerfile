@@ -5,9 +5,12 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean && \
     rm -rf /var/tmp /tmp /var/lib/apt/lists/*
 
+#####
+# End of Base
+#####
+
+
 WORKDIR /tsne
-ADD . /tsne
 
-RUN pip install -r requirements.txt
-
-RUN pip install -e .
+ADD dist .
+#RUN pip install --no-index --find-links=/tsne tsne

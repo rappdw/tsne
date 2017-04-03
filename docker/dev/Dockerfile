@@ -5,12 +5,16 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean && \
     rm -rf /var/tmp /tmp /var/lib/apt/lists/*
 
-WORKDIR /tsne
-ADD requirements.txt .
+#####
+# End of Base
+#####
 
-RUN pip install -r /tsne/requirements.txt
+
 # used for test/demo
 RUN pip install scikit-learn matplotlib
+
+WORKDIR /tsne
+ADD . /tsne
 
 ENTRYPOINT /usr/local/bin/pip install -e /tsne && /bin/bash
 

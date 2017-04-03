@@ -80,3 +80,7 @@ Run `brew install gcc --without-multilib` (to get OpenMP version of compiler)
 You'll need to set environment variables for CC and CXX to get setuptools to build things properly.
 
 `export CXX=/usr/local/bin/g++-6; export CC=/usr/local/bin/gcc-6; pip install -e .`
+
+Mulit-core
+----------
+see: http://python-notes.curiousefficiency.org/en/latest/python3/multicore_python.html
