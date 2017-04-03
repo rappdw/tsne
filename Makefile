@@ -1,13 +1,14 @@
 build:
-	python setup.py build_ext --inplace
+	python setup.py build_ext
 
 install:
-	python setup.py build_ext --inplace
-	python setup.py install
+	python setup.py build_ext
+	python setup.py install -e .
 
-sdist:
-	python setup.py sdist
+wheel:
+	python setup.py bdist_wheel
 
 clean:
 	rm -rf *.pyc *.so build/ bh_sne.cpp
-	rm -rf tsne/*.pyc tsne/*.so tsne/build/ tsne/bh_sne.cpp
+	rm -rf tsne/*.pyc tsne/*.so tsne/bh_sne.cpp
+	rm -rf build dist
