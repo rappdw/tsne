@@ -2,21 +2,66 @@
 To upload a new version:
 1. make clean
 2. git tag a new version: git tag v1.x.x
-3. python setup.py sdist
-4. python setup.py sdist register upload
+3. python setup.py bdist_wheel
+4. python setup.py bdist_wheel upload -r pypi-internal
 """
 
 import sys
+import os
 import platform
+import shutil
 
 from distutils.core import setup
 from setuptools import find_packages
 from distutils.extension import Extension
+from distutils.dir_util import copy_tree
 
 import versioneer
 import numpy
 from Cython.Distutils import build_ext
 from Cython.Build import cythonize
+
+
+class CmakeBuildMixin():
+    def cmake_build(self):
+        build_dir = os.path.join(os.path.dirname(__file__), self.build_lib + '/cmake')
+        source_dir = os.path.join(os.path.join(os.path.dirname(__file__), 'tsne'), 'bh_sne_src')
+        if not os.path.exists(build_dir):
+            os.makedirs(build_dir)
+        else:
+            shutil.rmtree(build_dir)
+            os.makedirs(build_dir)
+
+        cwd = os.getcwd()
+        try:
+            os.chdir(build_dir)
+            return_val = os.system('cmake -DCMAKE_BUILD_TYPE=RELEASE ' + source_dir)
+
+            if return_val != 0:
+                print('cannot find cmake')
+                exit(-1)
+
+            os.system('make VERBOSE=1')
+            # delete any of the cmake generated files
+            shutil.rmtree(os.path.join(build_dir, 'CMakeFiles'))
+            os.remove(os.path.join(build_dir, 'CMakeCache.txt'))
+            os.remove(os.path.join(build_dir, 'Makefile'))
+            os.remove(os.path.join(build_dir, 'cmake_install.cmake'))
+            # this leaves just the generated executables in the path.
+            # copy them into the tsne directory so that they will be picked
+            # up by the install_lib command during install, or bdist_wheel
+            dest_dir = os.path.join(os.path.dirname(build_dir), 'tsne')
+            copy_tree(build_dir, dest_dir)
+        finally:
+            os.chdir(cwd)
+            shutil.rmtree(build_dir)
+
+
+class CmakeBuildExt(CmakeBuildMixin, build_ext):
+    def run(self):
+        build_ext.run(self)
+        self.cmake_build()
+
 
 if sys.platform == 'darwin':
     # OS X
@@ -62,11 +107,11 @@ else:
 ext_modules = cythonize(ext_modules)
 
 cmdclass = versioneer.get_cmdclass()
-cmdclass['build_ext'] = build_ext
+cmdclass['build_ext'] = CmakeBuildExt # build_ext
 
 setup(name='tsne',
       version=versioneer.get_version(),
-      cmdclass=versioneer.get_cmdclass(),
+      cmdclass=cmdclass,
       author='Daniel Rapp',
       author_email='rappdw@gmail.com',
       url='https://github.com/rappdw/tsne.git',
