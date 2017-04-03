@@ -128,10 +128,10 @@ public:
         std::priority_queue<HeapItem> heap;
         
         // Variable that tracks the distance to the farthest point in our results
-        _tau = DBL_MAX;
+        double tau = DBL_MAX;
         
         // Perform the search
-        search(_root, target, k, heap);
+        search(_root, target, k, heap, &tau);
         
         // Gather final results
         results->clear(); distances->clear();
@@ -148,7 +148,6 @@ public:
     
 private:
     std::vector<T> _items;
-    double _tau;
     
     // Single node of a VP tree (has a point and radius; left children are closer to point than the radius)
     struct Node
@@ -227,7 +226,7 @@ private:
     }
     
     // Helper function that searches the tree    
-    void search(Node* node, const T& target, int k, std::priority_queue<HeapItem>& heap)
+    void search(Node* node, const T& target, int k, std::priority_queue<HeapItem>& heap, double* ptau)
     {
         if(node == NULL) return;     // indicates that we're done here
         
@@ -235,12 +234,12 @@ private:
         double dist = distance(_items[node->index], target);
 
         // If current node within radius tau
-        if(dist < _tau) {
-            if(heap.size() == k) heap.pop();                 // remove furthest node from result list (if we already have k results)
-            heap.push(HeapItem(node->index, dist));           // add current node to result list
-            if(heap.size() == k) _tau = heap.top().dist;     // update value of tau (farthest point in result list)
+        if(dist < (*ptau)) {
+            if(heap.size() == k) heap.pop();                // remove furthest node from result list (if we already have k results)
+            heap.push(HeapItem(node->index, dist));         // add current node to result list
+            if(heap.size() == k) *ptau = heap.top().dist;   // update value of tau (farthest point in result list)
         }
-        
+
         // Return if we arrived at a leaf
         if(node->left == NULL && node->right == NULL) {
             return;
@@ -248,22 +247,22 @@ private:
         
         // If the target lies within the radius of ball
         if(dist < node->threshold) {
-            if(dist - _tau <= node->threshold) {         // if there can still be neighbors inside the ball, recursively search left child first
-                search(node->left, target, k, heap);
+            if(dist - (*ptau) <= node->threshold) {         // if there can still be neighbors inside the ball, recursively search left child first
+                search(node->left, target, k, heap, ptau);
             }
             
-            if(dist + _tau >= node->threshold) {         // if there can still be neighbors outside the ball, recursively search right child
-                search(node->right, target, k, heap);
+            if(dist + (*ptau) >= node->threshold) {         // if there can still be neighbors outside the ball, recursively search right child
+                search(node->right, target, k, heap, ptau);
             }
         
         // If the target lies outsize the radius of the ball
         } else {
-            if(dist + _tau >= node->threshold) {         // if there can still be neighbors outside the ball, recursively search right child first
-                search(node->right, target, k, heap);
+            if(dist + (*ptau) >= node->threshold) {         // if there can still be neighbors outside the ball, recursively search right child first
+                search(node->right, target, k, heap, ptau);
             }
             
-            if (dist - _tau <= node->threshold) {         // if there can still be neighbors inside the ball, recursively search left child
-                search(node->left, target, k, heap);
+            if(dist - (*ptau) <= node->threshold) {         // if there can still be neighbors inside the ball, recursively search left child
+                search(node->left, target, k, heap, ptau);
             }
         }
     }
