@@ -14,6 +14,7 @@ from setuptools import find_packages
 from distutils.extension import Extension
 
 import versioneer
+import numpy
 from Cython.Distutils import build_ext
 from Cython.Build import cythonize
 
@@ -73,7 +74,8 @@ setup(name='tsne',
       long_description='''
 This is based on the https://github.com/10XDev/tsne.git fork of L.J.P. van der Maaten BH-tSNE implementation.
 
-It has fixes to allow this to run in Python 3 as well as implements parallelism vi OpenMP.''',
+It has fixes to allow this to run in Python 3. More significantly, performance has been significantly
+increased with OpenMP parallelism (see: https://github.com/rappdw/tsne-perf-test.git)''',
       license='Apache License Version 2.0, January 2004',
       packages=find_packages(),
       ext_modules=ext_modules,
