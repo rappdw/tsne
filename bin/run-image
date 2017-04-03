@@ -15,7 +15,7 @@ def get_default_root():
     return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def get_default_project_name():
-    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return os.path.basename(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 def run(mode, root=get_default_root(), project=get_default_project_name(), workdir='tsne', keep_container=False):
     it = '-d' if keep_container else '-it'
@@ -28,7 +28,7 @@ if __name__ == '__main__':
     image_types = ['prod', 'dev', 'jenkins']
     parser = argparse.ArgumentParser()
     parser.add_argument("image", choices=image_types, help="image to build")
-    parser.add_argument("keep", "-k", "--keep", help="keep the image after execution", default=False)
+    parser.add_argument("--keep", "-k", help="keep the image after execution", action='store_true')
     # TODO: figure out workdir in common with Dockerfiles
     args = parser.parse_args()
 
