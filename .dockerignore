@@ -1,10 +1,8 @@
 .git
 build
 *.egg-info
-examples
 .*env
 activate
-.travis.yml
 *.pkl.gz
 *.png
 tsne/*.so
