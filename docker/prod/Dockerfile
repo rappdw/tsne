@@ -14,4 +14,6 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /tsne
 
 ADD dist .
-#RUN pip install --no-index --find-links=/tsne tsne
+RUN pip install --find-links=/tsne bh-tsne
+VOLUME /data
+

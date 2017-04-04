@@ -15,7 +15,8 @@ def get_default_root():
     return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def get_default_project_name():
-    return os.path.basename(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    #return os.path.basename(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    return 'bh-tsne'
 
 def run(mode, root=get_default_root(), project=get_default_project_name(), workdir='tsne', keep_container=False):
     it = '-d' if keep_container else '-it'

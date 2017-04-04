@@ -15,6 +15,7 @@ from distutils.core import setup
 from setuptools import find_packages
 from distutils.extension import Extension
 from distutils.dir_util import copy_tree
+from distutils.command.build_scripts import build_scripts
 
 import versioneer
 import numpy
@@ -24,17 +25,18 @@ from Cython.Build import cythonize
 
 class CmakeBuildMixin():
     def cmake_build(self):
-        build_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), self.build_lib + '/cmake')
+        build_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), self.build_dir)
+        cmake_dir = os.path.join(build_dir, 'cmake')
         source_dir = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tsne'), 'bh_sne_src')
-        if not os.path.exists(build_dir):
-            os.makedirs(build_dir)
+        if not os.path.exists(cmake_dir):
+            os.makedirs(cmake_dir)
         else:
-            shutil.rmtree(build_dir)
-            os.makedirs(build_dir)
+            shutil.rmtree(cmake_dir)
+            os.makedirs(cmake_dir)
 
         cwd = os.getcwd()
         try:
-            os.chdir(build_dir)
+            os.chdir(cmake_dir)
             return_val = os.system('cmake -DCMAKE_BUILD_TYPE=RELEASE ' + source_dir)
 
             if return_val != 0:
@@ -43,24 +45,24 @@ class CmakeBuildMixin():
 
             os.system('make VERBOSE=1')
             # delete any of the cmake generated files
-            shutil.rmtree(os.path.join(build_dir, 'CMakeFiles'))
-            os.remove(os.path.join(build_dir, 'CMakeCache.txt'))
-            os.remove(os.path.join(build_dir, 'Makefile'))
-            os.remove(os.path.join(build_dir, 'cmake_install.cmake'))
+            shutil.rmtree(os.path.join(cmake_dir, 'CMakeFiles'))
+            os.remove(os.path.join(cmake_dir, 'CMakeCache.txt'))
+            os.remove(os.path.join(cmake_dir, 'Makefile'))
+            os.remove(os.path.join(cmake_dir, 'cmake_install.cmake'))
             # this leaves just the generated executables in the path.
-            # copy them into the tsne directory so that they will be picked
+            # copy them into base directory so that they will be picked
             # up by the install_lib command during install, or bdist_wheel
-            dest_dir = os.path.join(os.path.dirname(build_dir), 'tsne')
-            copy_tree(build_dir, dest_dir)
+            copy_tree(cmake_dir, build_dir)
         finally:
             os.chdir(cwd)
-            shutil.rmtree(build_dir)
+            shutil.rmtree(cmake_dir)
 
 
-class CmakeBuildExt(CmakeBuildMixin, build_ext):
+class CmakeBuildScripts(CmakeBuildMixin, build_scripts):
     def run(self):
-        build_ext.run(self)
         self.cmake_build()
+        build_scripts.run(self)
+
 
 
 if sys.platform == 'darwin':
@@ -107,9 +109,10 @@ else:
 ext_modules = cythonize(ext_modules)
 
 cmdclass = versioneer.get_cmdclass()
-cmdclass['build_ext'] = CmakeBuildExt # build_ext
+cmdclass['build_ext'] = build_ext
+cmdclass['build_scripts'] = CmakeBuildScripts
 
-setup(name='tsne',
+setup(name='bh-tsne',
       version=versioneer.get_version(),
       cmdclass=cmdclass,
       author='Daniel Rapp',
@@ -124,8 +127,9 @@ increased with OpenMP parallelism (see: https://github.com/rappdw/tsne-perf-test
       license='Apache License Version 2.0, January 2004',
       packages=find_packages(),
       ext_modules=ext_modules,
+      scripts=['tsne/bh_sne_src/bhtsne.py'],
       install_requires=[
           'numpy',
           'scipy'
-          ]
+      ]
       )

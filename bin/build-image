@@ -13,12 +13,17 @@
 import argparse
 import subprocess
 import shlex
+import os
 
-def build(image):
-    return 'docker build -t tsne-{0} -f docker/{0}/Dockerfile .'.format(image)
+def build(project, mode):
+    return 'docker build -t {project}-{mode} -f docker/{mode}/Dockerfile .'.format(project=project, mode=mode)
 
-def clean(image):
-    return 'docker rmi tsne-{0}'.format(image)
+def clean(project, mode):
+    return 'docker rmi {project}-{mode}'.format(project=project, mode=mode)
+
+def get_default_project_name():
+#    return os.path.basename(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    return 'bh-tsne'
 
 def image_operation(operation):
     print('\n\n============================================================================')
@@ -27,7 +32,8 @@ def image_operation(operation):
 
 
 if __name__ == '__main__':
-    image_types = ['prod', 'dev', 'jenkins']
+    docker_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'docker')
+    image_types = [x for x in os.listdir(docker_dir) if os.path.isdir(os.path.join(docker_dir, x))]
     parser = argparse.ArgumentParser()
     parser.add_argument("image", choices=['all', 'clean'] + image_types, help="image to build")
     args = parser.parse_args()
@@ -43,4 +49,4 @@ if __name__ == '__main__':
         images_to_build = [args.image]
 
     for image in images_to_build:
-        image_operation(fn(image))
+        image_operation(fn(get_default_project_name(), image))
