@@ -86,6 +86,5 @@ Performance
 This fork of the orignal project has a number of performance improvements resulting in an order
 of magnitude performance improvement when running on multi-core systems. See 
 [tsne-pref-test](https://github.com/rappdw/tsne-perf-test) for performance comparisions of
-various branches of BH-t-SNE. (Note, work on a python nogil wrapper is still in progress. 
-The performance comparisions were performed against platform executable.)
+various branches of BH-t-SNE. 
 
