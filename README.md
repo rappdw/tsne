@@ -1,3 +1,5 @@
+[![PyPI - Version](https://img.shields.io/pypi/v/tsne-mp.svg)](https://pypi.org/project/tsne-mp/) [![PyPI - Wheel](https://img.shields.io/pypi/wheel/tsne-mp.svg)](https://pypi.org/project/tsne-mp/)
+
 # Python-TSNE
 
 This is based on the [10XDev/tsne](https://github.com/10XDev/tsne.git) fork of L.J.P. van der Maaten BH-tSNE implementation.
