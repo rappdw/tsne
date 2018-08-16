@@ -3,6 +3,12 @@ tsne-mp is a binary only distribution. It is somewhat complicated to build. Beca
 a set of build scripts (in bin directory) as well as docker containers to capture all requirements for building
 and for producing reproducable builds.
 
+To build and publish:
+
+1) Create a new release on github
+2) `bin/build.sh`
+3) `bin/publish.sh`
+
 ## Build Prerequisites
 
 * [numpy](numpy.scipy.org)

@@ -1,11 +1,3 @@
-"""
-To upload a new version:
-1. make clean
-2. git tag a new version, e.g git tag v1.x.x
-3. bin/build-linux.sh
-4. twine upload -r pypi wheelhouse/*
-"""
-
 import sys
 
 from os import path
