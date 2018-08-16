@@ -17,7 +17,7 @@ this implementation performs significantly faster than scikit-learn's. If you ne
 
 A python ([cython](http://www.cython.org)) wrapper for [Barnes-Hut-SNE](http://homepage.tudelft.nl/19j49/t-SNE.html) aka fast-tsne.
 
-We branched 10XDev's implementation and openmp enabled the code.
+We forked 10XDev's implementation and openmp enabled the code.
 
 ## Installation
 
