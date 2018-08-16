@@ -1,5 +1,11 @@
 .git
 build
+dist
+dist.*
+wheelhouse
+examples
+mnist.pkl.gz
+__pychache__
 *.egg-info
 .*env
 activate

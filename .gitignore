@@ -39,3 +39,6 @@ tsne/bh_sne_3d.cpp
 tsne/bh_sne_src/bh_tsne
 *.pkl.gz
 .cache
+
+_version.py.bld
+wheelhouse
