@@ -7,8 +7,8 @@ This is based on the [10XDev/tsne](https://github.com/10XDev/tsne.git) fork of L
 It has fixes to allow this to run in Python 3 and performance has been significantly
 increased with OpenMP parallelism. (see: [tsne-perf-test](https://github.com/rappdw/tsne-perf-test.git))
 
-**Note:** While [Scikit-learn v0.17](http://scikit-learn.org/stable/whats_new.html#version-0-17)
-This implementation performs significantly faster than scikit-learn's. If you need speed, use this.
+**Note:** While [Scikit-learn v0.17](http://scikit-learn.org/stable/whats_new.html#version-0-17) as a tsne implementation, 
+this implementation performs significantly faster than scikit-learn's. If you need speed, use this.
 
 
 ## Algorithms
