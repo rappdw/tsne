@@ -1,4 +1,4 @@
-[![PyPI - Version](https://img.shields.io/pypi/v/tsne-mp.svg)](https://pypi.org/project/tsne-mp/) [![PyPI - Wheel](https://img.shields.io/pypi/wheel/tsne-mp.svg)](https://pypi.org/project/tsne-mp/)
+[![PyPI - Version](https://img.shields.io/pypi/v/tsne-mp.svg)](https://pypi.org/project/tsne-mp/) [![PyPI - Wheel](https://img.shields.io/pypi/wheel/tsne-mp.svg)](https://pypi.org/project/tsne-mp/) [![Python 3.6](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/) [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/) [![Python 3.6](https://img.shields.io/badge/python-3.5-blue.svg)](https://www.python.org/downloads/release/python-350/) 
 
 # Python TSNE implementation utilizing openmp for performacne
 
