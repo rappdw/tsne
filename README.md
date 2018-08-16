@@ -1,6 +1,6 @@
 [![PyPI - Version](https://img.shields.io/pypi/v/tsne-mp.svg)](https://pypi.org/project/tsne-mp/) [![PyPI - Wheel](https://img.shields.io/pypi/wheel/tsne-mp.svg)](https://pypi.org/project/tsne-mp/) [![Python 3.6](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/) [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/) [![Python 3.6](https://img.shields.io/badge/python-3.5-blue.svg)](https://www.python.org/downloads/release/python-350/) 
 
-# Python TSNE implementation utilizing openmp for performacne
+# Python TSNE implementation utilizing openmp for performance
 
 This is based on the [10XDev/tsne](https://github.com/10XDev/tsne.git) fork of L.J.P. van der Maaten BH-tSNE implementation.
 
@@ -9,7 +9,6 @@ increased with OpenMP parallelism. (see: [tsne-perf-test](https://github.com/rap
 
 **Note:** While [Scikit-learn v0.17](http://scikit-learn.org/stable/whats_new.html#version-0-17)
 This implementation performs significantly faster than scikit-learn's. If you need speed, use this.
-
 
 
 ## Algorithms
@@ -48,14 +47,4 @@ in [the original project](https://github.com/lvdmaaten/bhtsne).
 ## More Information
 
 See *Barnes-Hut-SNE* (2013), L.J.P. van der Maaten. It is available on [arxiv](http://arxiv.org/abs/1301.3342).
-
-## Mulit-core
-see: [Python 3 - Multicore](http://python-notes.curiousefficiency.org/en/latest/python3/multicore_python.html)
-
-## Performance
-
-This fork of the orignal project has a number of performance improvements resulting in an order
-of magnitude performance improvement when running on multi-core systems. See 
-[tsne-pref-test](https://github.com/rappdw/tsne-perf-test) for performance comparisions of
-various implementaitons of tsne. 
 
