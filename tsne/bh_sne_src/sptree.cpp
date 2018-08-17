@@ -396,10 +396,12 @@ double SPTree<NDims>::computeNonEdgeForces(unsigned int point_index, double thet
 template<int NDims>
 void SPTree<NDims>::computeEdgeForces(unsigned int* row_P, unsigned int* col_P, double* val_P, int N, double* pos_f) const
 {
-
     // Loop over all edges in the graph
+    //   NOTE: To support compilation on vs 2017 we cannot used unsigned integers
+    //   this seems to be because vs is using openmp 2.5 instead of 3
     #pragma omp parallel for schedule(static)
-    for(unsigned int n = 0; n < N; n++) {
+    //for(unsigned int n = 0; n < N; n++) {
+    for(int n = 0; n < N; n++) {
         unsigned int ind1 = n * NDims;
         for(unsigned int i = row_P[n]; i < row_P[n + 1]; i++) {
 

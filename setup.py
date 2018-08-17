@@ -67,6 +67,12 @@ if __name__ == "__main__":
             library_dirs = []
             compile_args = ['-Xpreprocessor', '-fopenmp', '-lomp' '-ffast-math', '-flto']
             link_args = ['-Wl,-framework', '-Wl,Accelerate', '-lomp']
+        # maybe used platform.system() == 'Windows'
+        elif sys.platform == 'win32':
+            library_dirs = []
+            # /fp:precise = -ffast-math
+            compile_args = ['/openmp', '/fp:precise'] 
+            link_args = []
         else:
             # LINUX
             library_dirs = ['/usr/local/lib', '/usr/lib64/atlas']
