@@ -43,3 +43,4 @@ tsne/bh_sne_src/bh_tsne
 _version.py.bld
 wheelhouse
 .venv
+.vscode
