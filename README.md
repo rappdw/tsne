@@ -27,6 +27,11 @@ This library has been added to pypi as tsne-mp
 pip install tsne-mp
 ```
 
+It requires openmp support.
+* OSX - `brew install libomp`
+* linux - 'sudo apt-get install libgomp1'
+* Windows - Included with Visual Studio C++
+
 ## Usage
 
 Basic usage:

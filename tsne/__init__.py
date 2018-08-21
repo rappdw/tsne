@@ -2,8 +2,24 @@
 from __future__ import division
 import numpy as np
 import scipy.linalg as la
-from tsne.bh_sne import BH_SNE
-from tsne.bh_sne_3d import BH_SNE_3D
+try:
+    from tsne.bh_sne import BH_SNE
+    from tsne.bh_sne_3d import BH_SNE_3D
+except ImportError as e:
+    import sys
+    if sys.platform == 'darwin':
+        raise ImportError('''
+Unable to import likely due to missing openmp. Try: 'brew install libomp'
+''') from e
+    elif sys.platform == 'win32':
+        raise ImportError('''
+Unable to import likely due to missing openmp. Ensure openmp support is installed.'
+        ''') from e
+    else:
+        raise ImportError('''
+Unable to import likely due to missing openmp. Try: 'sudo apt-get install libgomp1'
+        ''') from e
+
 
 def bh_sne(data, pca_d=None, d=2, perplexity=30., theta=0.5,
            random_state=None, copy_data=False, init=None,
